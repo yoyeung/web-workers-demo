@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Web Workers example</title>
+    <link href='http://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="scripts/imageManips.js"></script>
+    <script src="scripts/wasm_exec.js"></script>
+		
+  </head>
+  <body>
+    <p class="header"><img class="udacity" src="http://udacity.github.io/60fps/images/udacity_logo.svg" alt="Udacity Logo"><a href="http://udacity.com/ud860" target="_blank">60FPS</a> quiz by <a href="http://twitter.com/cwpittman" target="_blank">Cameron Pittman</a></p>
+
+    <div class="container">
+      <div class="half" id="time-animation">
+        <h2>Jank Timer</h2>
+      </div>
+      <div class="half" id="image-manipulator">
+        <h2>Image Manipulator</h2>
+        <div><input type="radio" name="mode" value="sync" checked>Sync</input>
+        <input type="radio" name="mode" value="webworker">Web Worker</input>
+        <input type="radio" name="mode" value="webworker-split">Web Worker Split</input>
+        <input type="radio" name="mode" value="webassembly">WebAssembly</input></div><br/>
+        <input type="file" id="imageLoader" name="imageLoader"/>
+        <button id="invert">Invert</button>
+        <button id="chroma">Chroma</button>
+        <button id="greyscale">Greyscale</button>
+        <button id="vibrant">Vibrant</button>
+        <button id="revert">Revert to Original</button>
+        <canvas id="image"></canvas>
+      </div>
+    </div>
+
+    <script src="scripts/time-animator.js"></script>
+    <script src="scripts/image-app.js"></script>
+    <script>
+      const go = new Go();
+      const memory = new WebAssembly.Memory({initial: 4096});
+			WebAssembly.instantiateStreaming(fetch("scripts/go/main.wasm"), {
+       js: {mem: memory},
+        ...go.importObject
+      }).then((result) => {
+        console.log(result)
+				go.run(result.instance);
+			});
+		</script>
+  </body>
+</html>
